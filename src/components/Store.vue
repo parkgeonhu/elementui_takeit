@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div class="hello">
         <el-button v-on:click="greet">el-button</el-button>
         <el-row>
@@ -25,24 +25,12 @@
             </div>
         </el-table>
 
-        <!-- <tr v-for="product in products" v-bind:key="product">
-            <td>{{product.name}}</td>
-            <td>{{product.default_price}}</td>
-            <td>
-                <el-button @click="add(product)"></el-button>
-            </td>
-        </tr>
-		<el-table v-for="product in products" v-bind:key="product">
-            <td>{{product.name}}</td>
-            <td>{{product.default_price}}</td>
-            <td>
-                <el-button @click="add(product)"></el-button>
-            </td>
-        </el-table> -->
     </div>
 </template>
 
 <script>
+	
+
     var storage = []
     export default {
         name: 'Store',
@@ -115,4 +103,4 @@
     a {
         color: #42b983;
     }
-</style>
+</style> -->
