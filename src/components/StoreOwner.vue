@@ -1,21 +1,52 @@
 <template>
-<div>
-	
-<div v-for="(order, index) in orders" v-bind:key="order">
-	주문명 : {{order.name}} / 주문자 : {{order.nickname}}
-	<el-button type="text" class="button" @click="changeOrderStatus(order, 'IN_PROGRESS')">제조 중</el-button>
-	<el-button type="text" class="button" @click="changeOrderStatus(order, 'MANUFACTURED')">완성</el-button>
-	<el-table :data="orders[index].order_items" style="width: 100%;" @current-change="selectProduct">
-            <div>
-                <el-table-column align=center header-align=center prop="name" :label="val">
-                </el-table-column>
-            </div>
-    </el-table>
-	
-	
-	</div>
 
-	</div>
+<div>
+    <div id="new">
+        <h2>새 주문</h2>
+        <div v-for="(order, index) in new_orders" v-bind:key="order">
+            주문명 : {{order.name}} / 주문자 : {{order.nickname}}
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'IN_PROGRESS')">제조 중</el-button>
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'MANUFACTURED')">완성</el-button>
+            <el-table :data="new_orders[index].order_items" style="width: 100%;" @current-change="selectProduct">
+                <div>
+                    <el-table-column align=center header-align=center prop="name" :label="val">
+                    </el-table-column>
+                </div>
+            </el-table>
+        </div>
+    </div>
+
+    <div id="inprogress">
+        <h2>제조 중인 주문</h2>
+        <div v-for="(order, index) in inprogress_orders" v-bind:key="order">
+            주문명 : {{order.name}} / 주문자 : {{order.nickname}}
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'IN_PROGRESS')">제조 중</el-button>
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'MANUFACTURED')">완성</el-button>
+            <el-table :data="inprogress_orders[index].order_items" style="width: 100%;" @current-change="selectProduct">
+                <div>
+                    <el-table-column align=center header-align=center prop="name" :label="val">
+                    </el-table-column>
+                </div>
+            </el-table>
+        </div>
+    </div>
+	
+	<div id="manufactured">
+        <h2>제조 완료된 주문</h2>
+        <div v-for="(order, index) in manufactured_orders" v-bind:key="order">
+            주문명 : {{order.name}} / 주문자 : {{order.nickname}}
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'IN_PROGRESS')">제조 중</el-button>
+            <el-button type="text" class="button" @click="changeOrderStatus(order, 'MANUFACTURED')">완성</el-button>
+            <el-table :data="manufactured_orders[index].order_items" style="width: 100%;" @current-change="selectProduct">
+                <div>
+                    <el-table-column align=center header-align=center prop="name" :label="val">
+                    </el-table-column>
+                </div>
+            </el-table>
+        </div>
+    </div>
+</div>
+
 </template>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
 </script>
@@ -33,16 +64,21 @@ export default {
     },
     data() {
         return {
-            orders: null,
+            new_orders: null,
+			inprogress_orders: null,
+			manufactured_orders: null,
             val: "주문 항목"
         }
     },
     created() {
-        this.get_menu()
+        this.get_order('NEW')
+		this.get_order('IN_PROGRESS')
+		this.get_order('MANUFACTURED')
+		// this.get_order()
+		// this.get_order()
     },
     methods: {
 		changeOrderStatus:function(order, status){
-			
 			var auth_token="Token "+localStorage.getItem('token')
 			console.log(order)
 			console.log(status)
@@ -61,22 +97,32 @@ export default {
 			}))
 
 		},
-        get_menu: function() {
+		
+        get_order: function(status) {
+			console.log("실행")
             instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
-                timeout: 6000,
+                timeout: 2000,
                 headers: {
                     "Content-Type": "application/json"
                 },
             });
-            instance.get('/stores/d1a43377-68a0-41ab-a241-d469033a3901/orders/status/new', {
+            instance.get('/stores/d1a43377-68a0-41ab-a241-d469033a3901/orders/status/'+status, {
                 auth: {
                     username: "1",
                     password: "ejrqo401"
                 }
             }).then(response => {
-                this.orders = response.data
-				console.log(this.orders)
+				if (status=='NEW'){
+					this.new_orders = response.data	
+				}
+				else if(status=='IN_PROGRESS'){
+					this.inprogress_orders=response.data
+				}
+				else if(status=='MANUFACTURED'){
+					this.manufactured_orders=response.data
+				}
+				console.log(this.new_orders)
             })
         }
     }
