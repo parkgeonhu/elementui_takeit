@@ -174,14 +174,14 @@ export default {
                     'Authorization': auth_token
                 },
             });
-
+			var payload=null
             instance.post('/stores/d1a43377-68a0-41ab-a241-d469033a3901/orders', JSON.stringify({
                 orderItems: this.p_storage,
                 grandTotal: 0
             })).then(response => {
                 alert(response.data)
 				console.log(response.data)
-				var payload=response.data
+				payload=response.data
                 Vue.IMP().request_pay({
                     pay_method: 'card',
                     merchant_uid: 'merchant_' + new Date().getTime(),
@@ -194,11 +194,13 @@ export default {
                     buyer_postcode: '123-456'
                 }, (result_success) => {
                     //성공할 때 실행 될 콜백 함수
-                    var msg = '결제가 완료되었습니다.';
-                    msg += '고유ID : ' + result_success.imp_uid;
-                    msg += '상점 거래ID : ' + result_success.merchant_uid;
-                    msg += '결제 금액 : ' + result_success.paid_amount;
-                    msg += '카드 승인번호 : ' + result_success.apply_num;
+                    var msg = '결제가 완료되었습니다.'
+					this.changeOrderStatus(payload, 'NEW')
+                    // msg += '고유ID : ' + result_success.imp_uid;
+                    // msg += '상점 거래ID : ' + result_success.merchant_uid;
+                    // msg += '결제 금액 : ' + result_success.paid_amount;
+                    // msg += '카드 승인번호 : ' + result_success.apply_num;
+					
                     alert(msg);
                 }, (result_failure) => {
                     //실패시 실행 될 콜백 함수
@@ -208,6 +210,27 @@ export default {
                 })
             })
             console.log(order_json)
+        },
+		
+		changeOrderStatus: function(order, status) {
+            var auth_token = "Token " + localStorage.getItem('token')
+            console.log(order)
+            console.log(status)
+            console.log(localStorage.getItem('token') + "storeowner토큰!!")
+            instance = this.$http.create({
+                baseURL: 'https://takeit.run.goorm.io/api',
+                timeout: 2000,
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': auth_token
+                },
+            });
+            instance.post('/stores/orders/change/status', JSON.stringify({
+                orderUUID: order.orderUUID,
+                status: status
+            })).then(response => {
+            })
+
         },
     }
 }
