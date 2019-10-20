@@ -40,17 +40,11 @@ export default {
         get_menu: function() {
             instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
-                timeout: 1000,
+                timeout: 6000,
                 headers: {
                     "Content-Type": "application/json"
                 },
             });
-            // var data = {
-            //     auth: {
-            //         phone : '1',
-            //         password : 'ejrqo401'
-            //     }
-            // }
             instance.get('/stores/d1a43377-68a0-41ab-a241-d469033a3901/orders/status/new', {
                 auth: {
                     username: "1",

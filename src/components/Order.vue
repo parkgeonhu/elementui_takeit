@@ -1,14 +1,14 @@
 <template>
     <div class="hello">
         <el-row>
-            <el-col :span="8" v-for="(o, index) in 4" :key="o" :offset="index > 0 ? 2 : 0">
+            <el-col :span="8" v-for="(store) in stores" :key="store">
                 <el-card :body-style="{ padding: '0px' }">
                     <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image">
                     <div style="padding: 14px;">
-                        <span>Yummy hamburger</span>
-                        <div class="bottom clearfix">
-                            <el-button type="text" class="button">Operating</el-button>
+						<div class="bottom clearfix">
+                            <el-button type="text" class="button">{{store.name}}</el-button>
                         </div>
+                        <span>{{store.place}}</span>
                     </div>
                 </el-card>
             </el-col>
@@ -44,8 +44,10 @@
 		
     </div>
 </template>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
 </script>
+
 <script>
 	
 /*jslint devel: true */
@@ -62,15 +64,36 @@ export default {
             products: null,
 			val : "카페이름@제품",
 			p_storage : [],
-			total_price : 0
+			total_price : 0,
+			token : null,
+			stores : null
         }
     },
     mounted() {
-        this.get_menu()
+		this.get_menu()
+		// this.get_token()
+		this.get_store()
     },
     methods: {
+		get_store:function(){
+			var auth_token="Token 51334e019d35794521f22f8ef8e9d967af30161c"
+			console.log(auth_token)
+            instance = this.$http.create({
+                baseURL: 'https://takeit.run.goorm.io/api',
+                timeout: 5000,
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': auth_token
+                },
+            });
+			instance.get('/stores/').then(response => {
+				this.stores=response.data
+				console.log(response.data)
+			})
+		},
 		get_total_price : function(){
 		},
+		
         selectProduct: function(val) {
 			this.total_price+=val.default_price
 			console.log("clicked")
@@ -81,14 +104,15 @@ export default {
             })
             console.log(this.p_storage)
         },
+		
         get_menu : function() {
 			instance = this.$http.create({
             baseURL: 'https://takeit.run.goorm.io/api',
-            timeout: 1000,
+            timeout: 5000,
             headers: {
                 "Content-Type": "application/json"
             },
-        });
+			});
         // var data = {
         //     auth: {
         //         phone : '1',
@@ -104,17 +128,39 @@ export default {
             this.products = response.data
         })
 		},
-        orderProduct: function() {
-            var order_json = JSON.stringify({
-                orderItems: this.p_storage,
-                grandTotal: 1900
-            })
-            instance = this.$http.create({
+		
+		get_token:function(){
+			instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
                 timeout: 1000,
                 headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+			
+			instance.post('/users/login', {
+                    phone : "1",
+                    password: "ejrqo401"
+			}).then(response => {
+				this.token=response.data['token']
+				console.log(this.token)
+            })
+		},
+		
+        orderProduct: function() {
+            var order_json = JSON.stringify({
+                orderItems: this.p_storage,
+                grandTotal: this.total_price
+            })
+			
+			var auth_token="Token 51334e019d35794521f22f8ef8e9d967af30161c"
+			console.log(auth_token)
+            instance = this.$http.create({
+                baseURL: 'https://takeit.run.goorm.io/api',
+                timeout: 5000,
+                headers: {
                     "Content-Type": "application/json",
-                    'Authorization': 'Token 547e01ddf409c9c6ef3d3282cfedfd0a1f0bd702'
+                    'Authorization': auth_token
                 },
             });
 
