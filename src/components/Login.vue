@@ -1,18 +1,18 @@
 <template>
   <div class="login">
     <el-card>
-      <h2>Login</h2>
+      <h2>TakeIt!</h2>
       <el-form
         class="login-form"
         :model="model"
         :rules="rules"
         ref="form"
-        @submit.native.prevent="login"
+        @submit.native.prevent="get_token"
       >
         <el-form-item prop="username">
           <el-input
             v-model="model.username"
-            placeholder="Username"
+            placeholder="휴대폰 번호"
             prefix-icon="fas fa-user"
           >
           </el-input>
@@ -20,7 +20,7 @@
         <el-form-item prop="password">
           <el-input
             v-model="model.password"
-            placeholder="Password"
+            placeholder="비밀번호"
             type="password"
             prefix-icon="fas fa-lock"
           >
@@ -36,15 +36,15 @@
             >Login</el-button
           >
         </el-form-item>
-        <a class="forgot-password" href="https://oxfordinformatics.com/"
-          >Forgot password ?</a
-        >
       </el-form>
     </el-card>
   </div>
 </template>
 
 <script>
+	/*jslint devel: true */
+/* eslint-disable no-console */
+	var instance=null
 export default {
   name: "Login",
   data() {
@@ -79,49 +79,53 @@ export default {
             trigger: "blur"
           }
         ]
-      }
+      },
+		token:null,
     };
   },
   methods: {
-	// get_token:function(){
-	// 		instance = this.$http.create({
-	// baseURL: 'https://takeit.run.goorm.io/api',
-	// timeout: 1000,
-	// headers: {
-	// "Content-Type": "application/json"
-	// },
-	// });
-			
-	// 		instance.post('/users/login', {
-	// phone : "1",
-	// password: "ejrqo401"
-	// 		}).then(response => {
-	// 			this.token=response.data['token']
-	// 			console.log(this.token)
-	// })
-	// },
-    simulateLogin() {
-      return new Promise(resolve => {
-        setTimeout(resolve, 800);
-      });
-    },
-    async login() {
-      let valid = await this.$refs.form.validate();
-      if (!valid) {
-        return;
-      }
-      this.loading = true;
-      await this.simulateLogin();
-      this.loading = false;
-      if (
-        this.model.username === this.validCredentials.username &&
-        this.model.password === this.validCredentials.password
-      ) {
-        this.$message.success("Login successfull");
-      } else {
-        this.$message.error("Username or password is invalid");
-      }
-    }
+	get_token:function(){
+			instance = this.$http.create({
+	baseURL: 'https://takeit.run.goorm.io/api',
+	timeout: 1000,
+	headers: {
+	"Content-Type": "application/json"
+	},
+	});	
+	instance.post('/users/login', {
+	phone : "1",
+	password: "ejrqo401"
+			}).then(response => {
+				localStorage.setItem('token', response.data['token'])
+
+				this.token=response.data['token']
+				this.$store.commit('getToken')
+				console.log(this.$store.state.token+"토큰이야")
+		this.$router.push('/order')
+	})
+	},
+    // simulateLogin() {
+    //   return new Promise(resolve => {
+    //     setTimeout(resolve, 800);
+    //   });
+    // },
+    // async login() {
+    //   let valid = await this.$refs.form.validate();
+    //   if (!valid) {
+    //     return;
+    //   }
+    //   this.loading = true;
+    //   await this.simulateLogin();
+    //   this.loading = false;
+    //   if (
+    //     this.model.username === this.validCredentials.username &&
+    //     this.model.password === this.validCredentials.password
+    //   ) {
+    //     this.$message.success("Login successfull");
+    //   } else {
+    //     this.$message.error("Username or password is invalid");
+    //   }
+    // }
   }
 };
 </script>

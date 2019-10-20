@@ -65,22 +65,33 @@ export default {
 			val : "카페이름@제품",
 			p_storage : [],
 			total_price : 0,
-			token : null,
+			token : "",
 			stores : null
         }
     },
-    mounted() {
+	mounted(){
+		// this.$store.commit('getToken')
+		// this.token=this.$store.token
+		// console.log(this.token+"여기야"+this.$store.token)
+		console.log(localStorage.getItem('token'))
+
+		console.log(this.token+" 콘솔 토큰")
+	},
+    created() {
 		this.get_menu()
-		// this.get_token()
 		this.get_store()
     },
     methods: {
+		get_token:function(){
+			this.token=localStorage.getItem('token')
+		},
 		get_store:function(){
-			var auth_token="Token 51334e019d35794521f22f8ef8e9d967af30161c"
+			this.get_token()
+			var auth_token="Token "+this.token
 			console.log(auth_token)
             instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
-                timeout: 5000,
+                timeout: 1000,
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': auth_token
@@ -108,7 +119,7 @@ export default {
         get_menu : function() {
 			instance = this.$http.create({
             baseURL: 'https://takeit.run.goorm.io/api',
-            timeout: 5000,
+            timeout: 1000,
             headers: {
                 "Content-Type": "application/json"
             },
@@ -129,23 +140,23 @@ export default {
         })
 		},
 		
-		get_token:function(){
-			instance = this.$http.create({
-                baseURL: 'https://takeit.run.goorm.io/api',
-                timeout: 1000,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            });
+		// get_token:function(){
+		// 	instance = this.$http.create({
+		// baseURL: 'https://takeit.run.goorm.io/api',
+		// timeout: 1000,
+		// headers: {
+		// "Content-Type": "application/json"
+		// },
+		// });
 			
-			instance.post('/users/login', {
-                    phone : "1",
-                    password: "ejrqo401"
-			}).then(response => {
-				this.token=response.data['token']
-				console.log(this.token)
-            })
-		},
+		// 	instance.post('/users/login', {
+		// phone : "1",
+		// password: "ejrqo401"
+		// 	}).then(response => {
+		// 		this.token=response.data['token']
+		// 		console.log(this.token)
+		// })
+		// },
 		
         orderProduct: function() {
             var order_json = JSON.stringify({
@@ -157,7 +168,7 @@ export default {
 			console.log(auth_token)
             instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
-                timeout: 5000,
+                timeout: 2000,
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': auth_token

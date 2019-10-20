@@ -8,6 +8,8 @@ import 'expose-loader?$!expose-loader?jQuery!jquery'
 import routes from './routes'
 import Router from 'vue-router'
 
+import { store } from './store'
+
 
 Vue.use(Router)
 const router = new Router({
@@ -23,6 +25,7 @@ Vue.IMP().load()
 Vue.config.productionTip = false
 
 new Vue({
+	store,
 	router,
   render: h => h(App)
 }).$mount('#app')

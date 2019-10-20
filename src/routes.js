@@ -13,11 +13,16 @@ export default [
     name: 'Order-page',
     component: Order
   },
-		{
+	{
     path: '/store',
-    name: 'Order-page',
+    name: 'Store-page',
     component: StoreOwner
   },
+	// {
+	// path: '/store',
+	// name: 'Store-page',
+	// component: StoreOwner
+	// },
   // {
   //   path: '/counter',
   //   name: 'counter-page',

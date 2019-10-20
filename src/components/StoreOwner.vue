@@ -2,13 +2,17 @@
 <div>
 	
 <div v-for="(order, index) in orders" v-bind:key="order">
-	주문명 : {{order.name}} / 주문자 : {{order.orderer}}
+	주문명 : {{order.name}} / 주문자 : {{order.nickname}}
+	<el-button type="text" class="button" @click="changeOrderStatus(order, 'IN_PROGRESS')">제조 중</el-button>
+	<el-button type="text" class="button" @click="changeOrderStatus(order, 'MANUFACTURED')">완성</el-button>
 	<el-table :data="orders[index].order_items" style="width: 100%;" @current-change="selectProduct">
             <div>
                 <el-table-column align=center header-align=center prop="name" :label="val">
                 </el-table-column>
             </div>
     </el-table>
+	
+	
 	</div>
 
 	</div>
@@ -30,13 +34,33 @@ export default {
     data() {
         return {
             orders: null,
-            val: "카페이름@제품"
+            val: "주문 항목"
         }
     },
-    mounted() {
+    created() {
         this.get_menu()
     },
     methods: {
+		changeOrderStatus:function(order, status){
+			
+			var auth_token="Token "+localStorage.getItem('token')
+			console.log(order)
+			console.log(status)
+			console.log(localStorage.getItem('token')+"storeowner토큰!!")
+			instance = this.$http.create({
+			baseURL: 'https://takeit.run.goorm.io/api',
+			timeout: 2000,
+			headers: {
+			"Content-Type": "application/json",
+			'Authorization': auth_token
+			},
+			});
+			instance.post('/stores/orders/change/status', JSON.stringify({
+				orderUUID : order.orderUUID,
+				status: status
+			}))
+
+		},
         get_menu: function() {
             instance = this.$http.create({
                 baseURL: 'https://takeit.run.goorm.io/api',
